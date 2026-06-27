@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ñero · Kenku Diviner</title>
+<style>
+  :root{
+    --red:#b4232a; --red-dark:#8f191f; --red-soft:#f6e3e3;
+    --bg:#f3efe8; --card:#ffffff; --ink:#23201c; --muted:#6c665c;
+    --line:#e4ddd0; --zebra:#faf7f1; --gold:#9a7b2e; --green:#1f6b53; --maxw:1040px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 0 16px;background:var(--bg);}
+  .ic{width:1.05em;height:1.05em;fill:currentColor;vertical-align:-0.15em;flex:0 0 auto;}
+  header{background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;padding:8px 16px 10px;text-align:center;}
+  header h1{margin:0;font-size:1.55rem;letter-spacing:.3px;}
+  header .sub{opacity:.92;font-size:.95rem;margin-top:3px;font-weight:600;letter-spacing:.5px;}
+  .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+  .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+        border-radius:9px;padding:5px 5px;font-size:.72rem;line-height:1.15;text-align:center;}
+  .chip b{display:block;font-size:1rem;font-weight:800;margin-top:1px;}
+  .chip .mini{display:block;font-size:.62rem;opacity:.85;margin-top:1px;}
+  .topbar{position:sticky;top:0;z-index:40;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+  .title{text-align:center;font-size:.9rem;font-weight:300;letter-spacing:.6px;opacity:.96;}
+  .title b{font-weight:700;}
+  nav{background:var(--red-dark);display:flex;width:100%;}
+  nav button{flex:1 1 0;background:none;border:none;color:#f3d9d9;font-size:.84rem;font-weight:700;
+             padding:14px 4px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;text-align:center;}
+  nav button.active{color:#fff;border-bottom-color:#ffd34d;background:rgba(0,0,0,.14);}
+  main{padding:16px 16px 0;}
+  section{display:none;animation:fade .2s ease;}
+  section.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{background:var(--red);color:#fff;font-size:.95rem;letter-spacing:.5px;text-transform:uppercase;
+     margin:20px 0 12px;padding:9px 12px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  h2:first-child{margin-top:4px;}
+  .lead{color:var(--muted);font-size:.88rem;margin:-4px auto 14px;text-align:center;max-width:680px;}
+  .note{font-size:.8rem;color:var(--muted);font-style:italic;margin:2px 0 14px;text-align:center;}
+  .grid{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:700px){ .grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));} }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .card.lft{border-left:4px solid var(--red);}
+  .card h3{margin:0 0 3px;font-size:1.02rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .card h3 .ic{color:var(--red);}
+  .card p{margin:4px 0 0;font-size:.92rem;color:#393530;}
+  .meta{font-size:.74rem;color:var(--muted);font-weight:600;}
+  .tag{display:inline-block;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:2px 7px;border-radius:20px;vertical-align:middle;}
+  .t-conc{background:#efe2c4;color:#7a5c00;} .t-rit{background:#dbe7f3;color:#1d4e79;} .t-rea{background:#f3dada;color:#9b1c1c;}
+  .t-bon{background:#e2efd8;color:#3f6b22;} .t-prep{background:var(--red);color:#fff;} .t-book{background:#e9e3d6;color:#6c5b32;} .t-free{background:#d8efe6;color:#1f6b53;}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px;font-size:.9rem;table-layout:fixed;}
+  th{background:var(--red);color:#fff;text-align:left;padding:10px;font-size:.76rem;text-transform:uppercase;letter-spacing:.3px;}
+  td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top;word-wrap:break-word;}
+  tr:nth-child(even) td{background:var(--zebra);}
+  td b{color:var(--ink);} .ctr{text-align:center;} .big{font-weight:800;font-size:1.05rem;}
+  .abil{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;}
+  @media(min-width:640px){ .abil{grid-template-columns:repeat(6,1fr);} .chips{grid-template-columns:repeat(6,1fr);} }
+  .ab{background:var(--card);border:1px solid var(--line);border-radius:12px;text-align:center;padding:11px 4px;}
+  .ab .nm{font-size:.66rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+  .ab .mod{font-size:1.7rem;font-weight:800;color:var(--red);line-height:1.1;} .ab .sc{font-size:.76rem;color:var(--muted);}
+  .vitals{margin-bottom:14px;border-left:4px solid var(--red);}
+  .vit-hp{display:flex;align-items:center;justify-content:center;gap:14px;padding:4px 0 12px;border-bottom:1px solid var(--line);}
+  .vit-hp .lbl{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--red);font-size:.95rem;}
+  .hpval{font-size:1.4rem;font-weight:800;min-width:74px;text-align:center;} .hpval small{font-size:.85rem;color:var(--muted);font-weight:600;}
+  .rbtn{width:42px;height:42px;border-radius:50%;border:2px solid var(--red);background:#fff;color:var(--red);font-size:1.5rem;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .rbtn:active{background:var(--red);color:#fff;}
+  .vit-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 2px 2px;flex-wrap:wrap;}
+  .rest-row{display:flex;gap:10px;margin-top:12px;}
+  .rest-btn{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+  .rest-btn.alt{background:#fff;color:var(--red);border:2px solid var(--red);} .rest-btn:active{opacity:.85;}
+  .tracker{margin-bottom:14px;}
+  .trk-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);}
+  .trk-row:last-of-type{border-bottom:none;} .trk-lbl{font-size:.9rem;font-weight:600;}
+  .pips{display:inline-flex;gap:7px;flex:0 0 auto;}
+  .pip{width:20px;height:20px;border-radius:50%;border:2px solid var(--red);cursor:pointer;background:#fff;transition:background .12s,transform .08s;}
+  .pip.spent{background:var(--red);} .pip:active{transform:scale(.88);}
+  .spell .sp-head{cursor:pointer;user-select:none;}
+  .chk{width:18px;height:18px;border:2px solid var(--red);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:.8rem;color:#fff;}
+  .spell.is-prep .chk{background:var(--red);} .spell.is-prep .chk::after{content:"✓";} .spell.is-prep{border-left-color:var(--green);}
+  .prep-counter{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:20px;padding:3px 12px;font-weight:800;color:var(--red);font-size:.85rem;}
+  .inv-gold{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .inv-gold label{font-weight:800;color:var(--red);display:flex;align-items:center;gap:6px;}
+  .inv-gold input{width:90px;font-size:1.05rem;font-weight:800;text-align:center;padding:8px;border:1px solid var(--line);border-radius:10px;color:var(--ink);}
+  #inv{width:100%;min-height:340px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.95rem;font-family:inherit;line-height:1.6;resize:vertical;color:var(--ink);background:#fff;}
+  #inv:focus,.inv-gold input:focus{outline:2px solid var(--red);outline-offset:1px;}
+  .lore-field{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+  .lore-field .lbl{font-size:.74rem;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.4px;}
+  .lore-field .ln{border-bottom:1px dashed #cfc7b8;height:22px;margin-top:6px;}
+  .banner{background:#fff6d6;border:1px solid #e8d27a;border-radius:12px;padding:12px 14px;font-size:.88rem;color:#6b561a;margin-bottom:14px;text-align:center;} .banner b{color:#8a6d12;}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#2b2320;color:#fff;padding:13px 20px;border-radius:12px;font-size:.9rem;font-weight:700;box-shadow:0 6px 22px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:90%;text-align:center;border:1px solid rgba(255,255,255,.15);}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .money-btn{width:34px;height:34px;font-size:1.2rem;}
+  .lore-ta{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;font-family:inherit;font-size:.92rem;line-height:1.55;resize:vertical;min-height:130px;color:var(--ink);background:#fff;}
+  .lore-ta.tall{min-height:300px;}
+  .lore-ta:focus{outline:2px solid var(--red);outline-offset:1px;}
+  .coins3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .coin{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .coin-lbl{font-size:.72rem;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.3px;}
+  .coin input{width:100%;font-size:1.05rem;font-weight:800;text-align:center;padding:8px 4px;border:1px solid var(--line);border-radius:10px;color:var(--ink);}
+  .coin input:focus{outline:2px solid var(--red);outline-offset:1px;}
+  .lore-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
+  .l-half{grid-column:span 3;} .l-full{grid-column:span 6;} .l-third{grid-column:span 2;}
+  @media(max-width:699px){ .l-half,.l-full,.l-third{grid-column:span 6;} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></symbol>
+  <symbol id="ic-spark" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></symbol>
+  <symbol id="ic-loop" viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8A5.87 5.87 0 0 1 6 12c0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></symbol>
+  <symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></symbol>
+  <symbol id="ic-coffee" viewBox="0 0 24 24"><path d="M20 3H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z"/></symbol>
+  <symbol id="ic-dice" viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.5 16.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0-7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5 3.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5 3.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0-7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></symbol>
+  <symbol id="ic-inv" viewBox="0 0 24 24"><path d="M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/></symbol>
+  <symbol id="ic-coin" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.88 15.76V19h-1.75v-1.29c-1.12-.24-2.06-.96-2.13-2.21h1.28c.07.68.54 1.21 1.73 1.21 1.27 0 1.56-.64 1.56-1.03 0-.54-.29-1.04-1.73-1.39-1.61-.39-2.71-1.05-2.71-2.38 0-1.11.9-1.84 2-2.08V8h1.75v1.3c1.21.29 1.82 1.21 1.86 2.21h-1.28c-.03-.72-.42-1.21-1.46-1.21-.99 0-1.59.45-1.59 1.08 0 .55.43.91 1.73 1.24 1.31.34 2.71.91 2.71 2.53-.01 1.18-.9 1.83-2.08 2.07z"/></symbol>
+</svg>
+<div class="wrap">
+<div class="topbar">
+<header>
+  <div class="title"><b>Ñero</b> · Kenku Diviner</div>
+  <div class="chips">
+    <div class="chip">HP<b>8</b></div>
+    <div class="chip">AC<b>12</b><span class="mini">15 w/ Mage Armor</span></div>
+    <div class="chip">Init<b>+2</b></div>
+    <div class="chip">Speed<b>30 ft</b></div>
+    <div class="chip">Spell DC<b>14</b></div>
+    <div class="chip">Spell Atk<b>+6</b></div>
+  </div>
+</header>
+<nav id="tabs">
+  <button data-t="overview">Overview</button>
+  <button data-t="actions">Actions</button>
+  <button data-t="spellbook">Spells</button>
+  <button data-t="details">Details</button>
+  <button data-t="inventory">Items</button>
+  <button data-t="lore">Lore</button>
+</nav>
+</div>
+<main>
+<section id="overview">
+  <h2><svg class="ic"><use href="#ic-heart"/></svg> Vitals &amp; rest</h2>
+  <div class="card vitals">
+    <div class="vit-hp">
+      <span class="lbl"><svg class="ic"><use href="#ic-heart"/></svg> HP</span>
+      <button class="rbtn" id="hpMinus">−</button>
+      <span class="hpval"><span id="hpNow">8</span> <small>/ 8</small></span>
+      <button class="rbtn" id="hpPlus">+</button>
+    </div>
+    <div class="vit-row">
+      <span class="trk-lbl"><svg class="ic" style="color:var(--red)"><use href="#ic-dice"/></svg> Hit Die (1d6) <span class="meta">— spend on a short rest to heal (roll + CON)</span></span>
+      <span class="pips" data-res="hd" data-max="1"></span>
+    </div>
+    <div class="rest-row">
+      <button class="rest-btn alt js-short"><svg class="ic"><use href="#ic-coffee"/></svg> Short rest</button>
+      <button class="rest-btn js-long"><svg class="ic"><use href="#ic-moon"/></svg> Long rest</button>
+    </div>
+  </div>
+  <h2><svg class="ic"><use href="#ic-spark"/></svg> At a glance</h2>
+  <div class="abil">
+    <div class="ab"><div class="nm">Strength</div><div class="mod">−1</div><div class="sc">8</div></div>
+    <div class="ab"><div class="nm">Dexterity</div><div class="mod">+2</div><div class="sc">14</div></div>
+    <div class="ab"><div class="nm">Constitution</div><div class="mod">+2</div><div class="sc">15</div></div>
+    <div class="ab" style="border-color:var(--red);background:var(--red-soft)"><div class="nm">Intelligence</div><div class="mod">+4</div><div class="sc">18</div></div>
+    <div class="ab"><div class="nm">Wisdom</div><div class="mod">+1</div><div class="sc">12</div></div>
+    <div class="ab"><div class="nm">Charisma</div><div class="mod">−1</div><div class="sc">8</div></div>
+  </div>
+  <div class="note">Intelligence is your spellcasting ability → it sets your save DC (14) and spell attack (+6). AC is 12 unarmored, 15 once Mage Armor is up (8 h).</div>
+  <h2><svg class="ic"><use href="#ic-target"/></svg> Combat essentials</h2>
+  <div class="grid">
+    <div class="card lft"><h3><svg class="ic"><use href="#ic-target"/></svg> Ranged attack</h3><p><b>Fire Bolt</b> · +6 to hit · 1d10 fire · 120 ft. Your default action, unlimited.</p></div>
+    <div class="card lft"><h3><svg class="ic"><use href="#ic-shield"/></svg> Defense</h3><p><b>Mage Armor</b> before a fight → AC 15. <b>Shield</b> (reaction) → +5 AC when you're hit.</p></div>
+    <div class="card lft"><h3><svg class="ic"><use href="#ic-spark"/></svg> Guaranteed damage</h3><p><b>Magic Missile</b> · 3 darts of 1d4+1 that never miss (spends a level-1 slot).</p></div>
+    <div class="card lft"><h3><svg class="ic"><use href="#ic-loop"/></svg> Control</h3><p><b>Sleep</b> (knock a group out) or <b>Grease</b> (make them slip). Turns a fight around.</p></div>
+  </div>
+</section>
+<section id="actions">
+  <h2><svg class="ic"><use href="#ic-target"/></svg> In combat</h2>
+  <div class="grid">
+    <div class="card lft"><h3>Main attack <span class="meta">action · unlimited</span></h3><p><b>Fire Bolt</b> +6, 1d10 fire (120 ft). Your every-turn damage.</p></div>
+    <div class="card lft"><h3>Debuff + damage <span class="meta">action · unlimited</span></h3><p><b>Mind Sliver</b>: 1d6 psychic and the enemy subtracts 1d4 from its next save. Great before Sleep.</p></div>
+    <div class="card lft"><h3>Guaranteed damage <span class="meta">action · lv.1 slot</span></h3><p><b>Magic Missile</b>: 3×(1d4+1), no attack roll. Finish off the wounded or spread it.</p></div>
+    <div class="card lft"><h3>Area control <span class="meta">action · lv.1 slot</span></h3><p><b>Sleep</b>: knocks enemies out (WIS save). <b>Grease</b>: slippery zone, drops them prone.</p></div>
+    <div class="card lft"><h3>Boost damage <span class="meta">bonus action · free 1×/rest</span></h3><p><b>Hex</b>: +1d6 necrotic every time you hit the marked target (concentration).</p></div>
+    <div class="card lft"><h3>Defense <span class="meta">reaction / prep</span></h3><p><b>Shield</b> (+5 AC, reaction) · <b>Mage Armor</b> (AC 15, lasts 8 h).</p></div>
+    <div class="card lft"><h3>Escape / mobility <span class="meta">bonus action · free 1×/rest</span></h3><p><b>Misty Step</b>: teleport 30 ft. Get out of trouble.</p></div>
+    <div class="card lft"><h3>Melee (emergency) <span class="meta">action</span></h3><p><b>Dagger</b>: +4 to hit, 1d4+2 piercing (uses Dexterity — it's finesse). Last resort.</p></div>
+  </div>
+  <h2><svg class="ic"><use href="#ic-chat"/></svg> Out of combat</h2>
+  <div class="grid">
+    <div class="card lft"><h3>Kenku Recall <span class="meta">2×/long rest</span></h3><p>Before rolling, give yourself <b>advantage</b> on an ability check using a skill you're proficient in (Arcana, History, Investigation, Insight, Perception, Sleight of Hand).</p></div>
+    <div class="card lft"><h3>Mimicry <span class="meta">unlimited</span></h3><p>Imitate any voice or sound you've heard. Detecting the fake needs an Insight check vs DC <b>9</b>. Brutal with <b>Minor Illusion</b>.</p></div>
+    <div class="card lft"><h3>Expert Forgery <span class="meta">unlimited</span></h3><p>Advantage to forge or duplicate handwriting, documents and objects.</p></div>
+    <div class="card lft"><h3>Familiar (Find Familiar) <span class="meta">ritual / 1×/rest</span></h3><p>Your raven scouts, spies, and delivers your touch spells. See through its eyes as an action.</p></div>
+    <div class="card lft"><h3>Rituals (Ritual Adept) <span class="meta">10 min</span></h3><p>Cast <b>Detect Magic</b> (and any ritual in your book) without preparing it or spending a slot.</p></div>
+    <div class="card lft"><h3>Magic utility <span class="meta">unlimited</span></h3><p><b>Prestidigitation</b> and <b>Mage Hand</b>: countless minor tricks and handling objects at range.</p></div>
+    <div class="card lft"><h3>Your strength: knowledge <span class="meta">checks</span></h3><p>Arcana, History and Investigation at <b>+6</b>. You're the party's brains.</p></div>
+  </div>
+</section>
+<section id="spellbook">
+  <h2><svg class="ic"><use href="#ic-bolt"/></svg> Tracker — tap to spend</h2>
+  <div class="tracker card">
+    <div class="trk-row"><span class="trk-lbl">Level-1 spell slots</span><span class="pips" data-res="slots" data-max="2"></span></div>
+    <div class="trk-row"><span class="trk-lbl">Arcane Recovery <span class="meta">(1×/day, short rest)</span></span><span class="pips" data-res="recovery" data-max="1"></span></div>
+    <div class="trk-row"><span class="trk-lbl">Kenku Recall <span class="meta">(advantage)</span></span><span class="pips" data-res="kenku" data-max="2"></span></div>
+    <div class="trk-row"><span class="trk-lbl">Hex <span class="meta">(free cast)</span></span><span class="pips" data-res="hex" data-max="1"></span></div>
+    <div class="trk-row"><span class="trk-lbl">Misty Step <span class="meta">(free cast)</span></span><span class="pips" data-res="misty" data-max="1"></span></div>
+    <div class="trk-row"><span class="trk-lbl">Find Familiar <span class="meta">(free cast)</span></span><span class="pips" data-res="familiar" data-max="1"></span></div>
+    <div class="rest-row">
+      <button class="rest-btn alt js-short"><svg class="ic"><use href="#ic-coffee"/></svg> Short rest</button>
+      <button class="rest-btn js-long"><svg class="ic"><use href="#ic-moon"/></svg> Long rest</button>
+    </div>
+  </div>
+  <h2>Cantrips · Level 0 <span style="font-weight:400;text-transform:none;font-size:.8rem">· at will</span></h2>
+  <div class="grid">
+    <div class="card"><h3>Fire Bolt <span class="meta">Evocation</span></h3><p>+6 to hit · 1d10 fire · 120 ft. Your main ranged damage.</p></div>
+    <div class="card"><h3>Mind Sliver <span class="meta">Enchantment</span></h3><p>INT save DC 14 · 1d6 psychic and −1d4 to its next save · 60 ft.</p></div>
+    <div class="card"><h3>Minor Illusion <span class="meta">Illusion</span></h3><p>Create a sound or an image · 30 ft · 1 min. Perfect combo with your Mimicry.</p></div>
+    <div class="card"><h3>Prestidigitation <span class="meta">Transmutation</span></h3><p>Minor sensory and utility tricks · 10 ft.</p></div>
+    <div class="card"><h3>Mage Hand <span class="meta">Conjuration</span></h3><p>Spectral hand that moves objects up to 10 lb · 30 ft.</p></div>
+  </div>
+  <h2>Spells · Level 1 <span style="font-weight:400;text-transform:none;font-size:.8rem">· prepare 4</span></h2>
+  <div class="note">Prepared this rest: <span class="prep-counter" id="prepCount">4 / 4</span> &nbsp;·&nbsp; tap a title to toggle.</div>
+  <div class="grid">
+    <div class="card lft spell" data-spell="Mage Armor"><h3 class="sp-head"><span class="chk"></span>Mage Armor <span class="tag ptag t-prep">Prepared</span></h3><div class="meta">Abjuration · action · touch · 8 h</div><p>AC becomes 13 + DEX (= <b>15</b>) without armor. Cast it at the start of the day.</p></div>
+    <div class="card lft spell" data-spell="Shield"><h3 class="sp-head"><span class="chk"></span>Shield <span class="tag ptag t-prep">Prepared</span> <span class="tag t-rea">Reaction</span></h3><div class="meta">Abjuration · reaction</div><p>+5 AC until your next turn and blocks <i>Magic Missile</i>. Lifesaver.</p></div>
+    <div class="card lft spell" data-spell="Magic Missile"><h3 class="sp-head"><span class="chk"></span>Magic Missile <span class="tag ptag t-prep">Prepared</span></h3><div class="meta">Evocation · action · 120 ft</div><p>3 darts of 1d4+1 force that <b>always</b> hit.</p></div>
+    <div class="card lft spell" data-spell="Sleep"><h3 class="sp-head"><span class="chk"></span>Sleep <span class="tag ptag t-prep">Prepared</span> <span class="tag t-conc">Concentration</span></h3><div class="meta">Enchantment · action · 90 ft · 1 min</div><p>5-ft-radius area: WIS save or Incapacitated → Unconscious. Devastating control.</p></div>
+    <div class="card lft spell" data-spell="Grease"><h3 class="sp-head"><span class="chk"></span>Grease <span class="tag ptag t-book">In book</span></h3><div class="meta">Conjuration · action · 60 ft · 1 min</div><p>10-ft slippery cube: DEX save or fall prone. Difficult terrain.</p></div>
+    <div class="card lft spell" data-spell="Detect Magic"><h3 class="sp-head"><span class="chk"></span>Detect Magic <span class="tag ptag t-book">In book</span> <span class="tag t-rit">Ritual</span></h3><div class="meta">Divination · ritual</div><p>Sense magic within 30 ft. Castable as a ritual without preparing (Ritual Adept).</p></div>
+  </div>
+  <h2>Feat spells <span style="font-weight:400;text-transform:none;font-size:.8rem">· outside the book</span></h2>
+  <div class="note">They don't use your 4 prepared slots. Each: free 1×/long rest (track above), or by spending a slot.</div>
+  <div class="grid">
+    <div class="card lft"><h3>Find Familiar <span class="tag t-rit">Ritual</span> <span class="tag t-free">Free 1×</span></h3><div class="meta">Conjuration · from Magic Initiate</div><p>Summon your familiar (a raven). It scouts and delivers your touch spells.</p></div>
+    <div class="card lft"><h3>Misty Step <span class="tag t-bon">Bonus action</span> <span class="tag t-free">Free 1×</span></h3><div class="meta">Conjuration · from Fey Touched</div><p>Teleport 30 ft. Instant escape.</p></div>
+    <div class="card lft"><h3>Hex <span class="tag t-bon">Bonus action</span> <span class="tag t-conc">Conc.</span> <span class="tag t-free">Free 1×</span></h3><div class="meta">Enchantment · from Fey Touched</div><p>+1d6 necrotic per hit on a marked target (1 h).</p></div>
+  </div>
+</section>
+<section id="details">
+  <h2>Ability scores</h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:16%"><col style="width:14%"><col style="width:40%"></colgroup>
+    <tr><th>Ability</th><th class="ctr">Total</th><th class="ctr">Mod</th><th>Where it comes from</th></tr>
+    <tr><td><b>STR</b></td><td class="ctr">8</td><td class="ctr big">−1</td><td>Point buy</td></tr>
+    <tr><td><b>DEX</b></td><td class="ctr">14</td><td class="ctr big">+2</td><td>Point buy</td></tr>
+    <tr><td><b>CON</b></td><td class="ctr">15</td><td class="ctr big">+2</td><td>14 + Sage (+1)</td></tr>
+    <tr><td><b>INT</b></td><td class="ctr">18</td><td class="ctr big">+4</td><td>15 + Sage (+2) + Fey Touched (+1)</td></tr>
+    <tr><td><b>WIS</b></td><td class="ctr">12</td><td class="ctr big">+1</td><td>Point buy</td></tr>
+    <tr><td><b>CHA</b></td><td class="ctr">8</td><td class="ctr big">−1</td><td>Point buy</td></tr>
+  </table>
+  <h2>Saving throws</h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:16%"><col style="width:54%"></colgroup>
+    <tr><th>Save</th><th class="ctr">Total</th><th>Calculation</th></tr>
+    <tr><td>Intelligence ✦</td><td class="ctr big">+6</td><td>INT +4 + prof. +2</td></tr>
+    <tr><td>Wisdom ✦</td><td class="ctr big">+3</td><td>WIS +1 + prof. +2</td></tr>
+    <tr><td>Constitution</td><td class="ctr">+2</td><td>CON</td></tr>
+    <tr><td>Dexterity</td><td class="ctr">+2</td><td>DEX</td></tr>
+    <tr><td>Strength / Charisma</td><td class="ctr">−1</td><td>STR / CHA</td></tr>
+  </table>
+  <div class="note">✦ Wizard proficiency in INT and WIS saves.</div>
+  <h2>Proficient skills</h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:16%"><col style="width:54%"></colgroup>
+    <tr><th>Skill</th><th class="ctr">Total</th><th>Source</th></tr>
+    <tr><td>Arcana (INT)</td><td class="ctr big">+6</td><td>Sage</td></tr>
+    <tr><td>History (INT)</td><td class="ctr big">+6</td><td>Sage</td></tr>
+    <tr><td>Investigation (INT)</td><td class="ctr big">+6</td><td>Wizard</td></tr>
+    <tr><td>Insight (WIS)</td><td class="ctr">+3</td><td>Wizard</td></tr>
+    <tr><td>Perception (WIS)</td><td class="ctr">+3</td><td>Kenku Recall</td></tr>
+    <tr><td>Sleight of Hand (DEX)</td><td class="ctr">+4</td><td>Kenku Recall</td></tr>
+  </table>
+  <div class="note">Passives: Perception 13 · Investigation 16 · Insight 13.</div>
+  <h2>Feats</h2>
+  <div class="grid">
+    <div class="card lft"><h3>Fey Touched <span class="meta">general feat (the extra one)</span></h3><p>+1 INT (already applied → 18). Learn <b>Misty Step</b> + <b>Hex</b>; each free 1×/rest or with a slot.</p></div>
+    <div class="card lft"><h3>Magic Initiate (Wizard) <span class="meta">origin feat · from Sage</span></h3><p>2 cantrips (<b>Prestidigitation, Mage Hand</b>) + 1 lv.1 spell (<b>Find Familiar</b>, free 1×/rest and also a ritual).</p></div>
+  </div>
+  <h2>Traits</h2>
+  <div class="grid">
+    <div class="card"><h3>Kenku</h3><p><b>Expert Forgery</b>, <b>Kenku Recall</b> (advantage 2×/rest on proficient skills) and <b>Mimicry</b> (DC 9 to detect). Humanoid, Small, speed 30 ft. <i>Cannot fly or glide.</i></p></div>
+    <div class="card"><h3>Wizard (level 1)</h3><p><b>Spellcasting</b> (INT), <b>Ritual Adept</b> (rituals from your book without preparing) and <b>Arcane Recovery</b> (1 lv.1 slot, 1×/day on a short rest).</p></div>
+  </div>
+  <h2>Proficiencies &amp; languages</h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+    <tr><td><b>Armor</b></td><td>None</td></tr>
+    <tr><td><b>Weapons</b></td><td>Simple weapons (you use the dagger)</td></tr>
+    <tr><td><b>Tools</b></td><td>Calligrapher's Supplies</td></tr>
+    <tr><td><b>Languages</b></td><td>Common + <b>2 of your choice</b> (pick yours): Common Sign Language, Draconic, Dwarvish, Elvish, Giant, Gnomish, Goblin, Halfling, Orc…</td></tr>
+  </table>
+  <h2>Level 3 — when you pick Diviner</h2>
+  <div class="grid">
+    <div class="card lft"><h3>Portent</h3><p>After each long rest, roll 2d20 and record them: you can <b>replace any d20</b> roll of yours or of an enemy you can see. Pure fate control.</p></div>
+    <div class="card lft"><h3>Divination Savant</h3><p>Add Divination spells to your book for free.</p></div>
+  </div>
+  <div class="note">In 2024 rules the subclass is chosen at level 3 (not level 2).</div>
+</section>
+<section id="inventory">
+  <h2><svg class="ic"><use href="#ic-inv"/></svg> My items <span style="font-weight:400;text-transform:none;font-size:.8rem">· editable, auto-saved</span></h2>
+  <div class="card">
+    <textarea id="inv" spellcheck="false"></textarea>
+    <div class="note" style="margin:8px 0 0">One item per line. Saved automatically as you type.</div>
+  </div>
+  <h2><svg class="ic"><use href="#ic-coin"/></svg> Money</h2>
+  <div class="card">
+    <div class="coins3">
+      <div class="coin"><span class="coin-lbl">Copper (cp)</span><input type="number" id="copper" value="0" min="0"></div>
+      <div class="coin"><span class="coin-lbl">Silver (sp)</span><input type="number" id="silver" value="0" min="0"></div>
+      <div class="coin"><span class="coin-lbl">Gold (gp)</span><input type="number" id="gold" value="13" min="0"></div>
+    </div>
+  </div>
+  <h2>Starting equipment <span style="font-weight:400;text-transform:none;font-size:.8rem">· reference, where it came from</span></h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+    <tr><th>Source</th><th>Includes</th></tr>
+    <tr><td><b>Wizard (opt. A)</b></td><td>2 daggers · arcane focus (quarterstaff) · robe · spellbook · scholar's pack · 5 gp</td></tr>
+    <tr><td><b>Sage (opt. A)</b></td><td>quarterstaff · calligrapher's supplies · history book · parchment · robe · 8 gp</td></tr>
+  </table>
+</section>
+<section id="lore">
+  <h2><svg class="ic"><use href="#ic-book"/></svg> La historia de Ñero</h2>
+  <div class="lore-grid">
+    <div class="lore-field l-half"><div class="lbl">Nombre</div><textarea class="lore-ta" data-lore="name"></textarea></div>
+    <div class="lore-field l-half"><div class="lbl">Apariencia / Personalidad</div><textarea class="lore-ta" data-lore="appearance"></textarea></div>
+    <div class="lore-field l-full"><div class="lbl">Historia / Trasfondo</div><textarea class="lore-ta tall" data-lore="backstory"></textarea></div>
+    <div class="lore-field l-third"><div class="lbl">Vínculos (aliados, enemigos)</div><textarea class="lore-ta" data-lore="bonds"></textarea></div>
+    <div class="lore-field l-third"><div class="lbl">Defecto / Secreto</div><textarea class="lore-ta" data-lore="flaw"></textarea></div>
+    <div class="lore-field l-third"><div class="lbl">Objetivos</div><textarea class="lore-ta" data-lore="goals"></textarea></div>
+  </div>
+</section>
+</main>
+</div>
+<div id="toast"></div>
+<script>
+(function(){
+  var KEY='kenkuSheetV3', MAXHP=8;
+  var L1=['Mage Armor','Shield','Magic Missile','Sleep','Grease','Detect Magic'];
+  var DEF={
+    prepared:{'Mage Armor':1,'Shield':1,'Magic Missile':1,'Sleep':1,'Grease':0,'Detect Magic':0},
+    used:{slots:0,recovery:0,kenku:0,hex:0,misty:0,familiar:0,hd:0},
+    hp:8, gold:13, silver:0, copper:0,
+    inv:"2 daggers\nArcane focus (quarterstaff)\nQuarterstaff\nSpellbook\nScholar's pack\nCalligrapher's supplies\nHistory book + parchment\nRobe x2",
+    lore:{name:"Ñero", appearance:"Un kenku todo negrito, medio cuervesco. Pillo villerito y desconfiado. Debido a su prematura desnutricion quedo chikito.", backstory:"Ñerito nacio una noche de primavera, en un gallinero calentito, mezclado entre los pollitos. Al verlo todo negrito y cabezon, todos se horrorizaron!!! Pero como es tan negrito y tan feito le decian!! Asi que lo echaron hacia el frio de la noche. Desde entonces se pudrió con las gallinas.\n\nUn dia choreando en la feria de Villa Draguellaneda le manoteó a un pelado un libro... Se sento con su mejor amigo el Paja, un owlin copado mal, que sabia leer, y juntos aprendieron el arte de la magia: desde entonces Ñerito tiene visiones premonitorias, voces que le dicen ESTATE PILLO desde el mas alla.", bonds:"El Paja: mejor amigo, un owlin copado mal. Gallinas: enemigas mortales. Su lema: gallina que veo gallina que apedreo.", flaw:"Defecto: es punga. No puede evitarlo. Si alguien se regala, manotazo de uña.\nSecreto: en el fondo, quiere pertenecer. Aunque no se lo admita ni a si mismo.", goals:"Su deseo mas profundo es formar una familia y, por fin, echar raíces."},
+    tab:'overview'
+  };
+  var state;
+  function load(){
+    var s=null; try{ s=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+    s=s||{}; state={};
+    state.prepared=Object.assign({},DEF.prepared,s.prepared||{});
+    state.used=Object.assign({},DEF.used,s.used||{});
+    state.hp=(typeof s.hp==='number')?s.hp:DEF.hp;
+    state.gold=(typeof s.gold==='number')?s.gold:DEF.gold;
+    state.silver=(typeof s.silver==='number')?s.silver:DEF.silver;
+    state.copper=(typeof s.copper==='number')?s.copper:DEF.copper;
+    state.inv=(typeof s.inv==='string')?s.inv:DEF.inv;
+    var sl=s.lore||{}; state.lore={}; Object.keys(DEF.lore).forEach(function(k){ state.lore[k]=(sl[k]&&sl[k].length)?sl[k]:DEF.lore[k]; });
+    state.tab=s.tab||DEF.tab;
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+  var toastT;
+  function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('show');},2400); }
+  function showTab(id){
+    document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('active',x.dataset.t===id);});
+    document.querySelectorAll('main section').forEach(function(s){s.classList.toggle('active',s.id===id);});
+    state.tab=id; save();
+  }
+  document.getElementById('tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; showTab(b.dataset.t); window.scrollTo({top:0,behavior:'smooth'}); });
+  function prepCount(){ return L1.reduce(function(n,name){return n+(state.prepared[name]?1:0);},0); }
+  function renderPrepared(){
+    document.querySelectorAll('.spell').forEach(function(card){
+      var name=card.dataset.spell, on=!!state.prepared[name];
+      card.classList.toggle('is-prep',on);
+      var tag=card.querySelector('.ptag'); tag.textContent=on?'Prepared':'In book'; tag.className='tag ptag '+(on?'t-prep':'t-book');
+    });
+    document.getElementById('prepCount').textContent=prepCount()+' / 4';
+  }
+  document.querySelectorAll('.spell .sp-head').forEach(function(hd){
+    hd.addEventListener('click',function(){
+      var name=hd.closest('.spell').dataset.spell;
+      if(state.prepared[name]){ state.prepared[name]=0; }
+      else{ if(prepCount()>=4){ toast('Max 4 level-1 spells prepared — unprepare one first'); return; } state.prepared[name]=1; }
+      save(); renderPrepared();
+    });
+  });
+  function renderPips(){
+    document.querySelectorAll('.pips').forEach(function(box){
+      var res=box.dataset.res, max=+box.dataset.max, used=state.used[res]||0;
+      box.innerHTML='';
+      for(var i=0;i<max;i++){ var p=document.createElement('span'); p.className='pip'+(i<used?' spent':''); p.dataset.i=i; box.appendChild(p); }
+    });
+  }
+  document.querySelectorAll('.pips').forEach(function(box){
+    box.addEventListener('click',function(e){ var p=e.target.closest('.pip'); if(!p)return; var res=box.dataset.res, i=+p.dataset.i, used=state.used[res]||0; state.used[res]=(i<used)? i : i+1; save(); renderPips(); });
+  });
+  function renderHP(){ document.getElementById('hpNow').textContent=state.hp; }
+  document.getElementById('hpMinus').addEventListener('click',function(){ if(state.hp>0){state.hp--;save();renderHP();} });
+  document.getElementById('hpPlus').addEventListener('click',function(){ if(state.hp<MAXHP){state.hp++;save();renderHP();} });
+  var invEl=document.getElementById('inv');
+  invEl.addEventListener('input',function(){ state.inv=invEl.value; save(); });
+  var coins=['copper','silver','gold'], coinEls={};
+  coins.forEach(function(k){ var el=document.getElementById(k); coinEls[k]=el; el.addEventListener('input',function(){ state[k]=parseInt(el.value,10)||0; save(); }); });
+  function renderCoins(){ coins.forEach(function(k){ var el=coinEls[k]; if(document.activeElement!==el) el.value=state[k]; }); }
+  function renderAll(){ renderPrepared(); renderPips(); renderHP(); renderCoins(); }
+  document.querySelectorAll('.js-short').forEach(function(b){
+    b.addEventListener('click',function(){
+      var msg;
+      if(state.used.recovery===0 && state.used.slots>0){ state.used.slots--; state.used.recovery=1; msg='Short rest — Arcane Recovery: 1 level-1 slot back'; }
+      else if(state.used.recovery>0){ msg='Short rest — Arcane Recovery already used (resets on a long rest)'; }
+      else { msg='Short rest — no spent slot to recover. Spend a Hit Die to heal (tap it, then add HP)'; }
+      save(); renderAll(); toast(msg);
+    });
+  });
+  document.querySelectorAll('.js-long').forEach(function(b){
+    b.addEventListener('click',function(){ state.used={slots:0,recovery:0,kenku:0,hex:0,misty:0,familiar:0,hd:0}; state.hp=MAXHP; save(); renderAll(); toast('Long rest — HP full, Hit Die, slots & uses reset'); });
+  });
+  load();
+  invEl.value=state.inv;
+  coins.forEach(function(k){ coinEls[k].value=state[k]; });
+  document.querySelectorAll('[data-lore]').forEach(function(t){
+    t.value=state.lore[t.dataset.lore]||'';
+    t.addEventListener('input',function(){ state.lore[t.dataset.lore]=t.value; save(); });
+  });
+  showTab(state.tab);
+  renderAll();
+})();
+</script>
+</body>
+</html>
