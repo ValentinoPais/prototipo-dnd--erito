@@ -51,7 +51,7 @@
   .t-conc{background:#efe2c4;color:#7a5c00;} .t-rit{background:#dbe7f3;color:#1d4e79;} .t-rea{background:#f3dada;color:#9b1c1c;}
   .t-bon{background:#e2efd8;color:#3f6b22;} .t-prep{background:var(--red);color:#fff;} .t-book{background:#e9e3d6;color:#6c5b32;} .t-free{background:#d8efe6;color:#1f6b53;}
   table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px;font-size:.9rem;table-layout:fixed;}
-  th{background:var(--red);color:#fff;text-align:left;padding:10px;font-size:.76rem;text-transform:uppercase;letter-spacing:.3px;}
+  th{background:#efe3cf;color:#7a4a12;text-align:left;padding:8px 10px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #ddc9a3;}
   td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top;word-wrap:break-word;}
   tr:nth-child(even) td{background:var(--zebra);}
   td b{color:var(--ink);} .ctr{text-align:center;} .big{font-weight:800;font-size:1.05rem;}
@@ -76,7 +76,7 @@
   .pips{display:inline-flex;gap:7px;flex:0 0 auto;}
   .pip{width:20px;height:20px;border-radius:50%;border:2px solid var(--red);cursor:pointer;background:#fff;transition:background .12s,transform .08s;}
   .pip.spent{background:var(--red);} .pip:active{transform:scale(.88);}
-  .spell .sp-head{cursor:pointer;user-select:none;}
+  .spell{cursor:pointer;user-select:none;}
   .chk{width:18px;height:18px;border:2px solid var(--red);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:.8rem;color:#fff;}
   .spell.is-prep .chk{background:var(--red);} .spell.is-prep .chk::after{content:"✓";} .spell.is-prep{border-left-color:var(--green);}
   .prep-counter{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:20px;padding:3px 12px;font-weight:800;color:var(--red);font-size:.85rem;}
@@ -95,11 +95,14 @@
   .lore-ta{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:6px;font-family:inherit;font-size:.92rem;line-height:1.55;resize:vertical;min-height:130px;color:var(--ink);background:#fff;}
   .lore-ta.tall{min-height:300px;}
   .lore-ta:focus{outline:2px solid var(--red);outline-offset:1px;}
-  .coins3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  .coin{display:flex;flex-direction:column;align-items:center;gap:5px;}
-  .coin-lbl{font-size:.72rem;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.3px;}
-  .coin input{width:100%;font-size:1.05rem;font-weight:800;text-align:center;padding:8px 4px;border:1px solid var(--line);border-radius:10px;color:var(--ink);}
-  .coin input:focus{outline:2px solid var(--red);outline-offset:1px;}
+  .coins3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .coin{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;}
+  .coin-lbl{font-size:.66rem;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.2px;text-align:center;}
+  .coin-step{display:flex;align-items:center;gap:2px;width:100%;min-width:0;}
+  .cbtn{flex:0 0 auto;width:26px;height:30px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:7px;font-size:1rem;font-weight:800;line-height:1;cursor:pointer;padding:0;}
+  .cbtn:active{background:var(--red);color:#fff;}
+  .coin-step input{flex:1 1 0;min-width:0;width:100%;font-size:.95rem;font-weight:800;text-align:center;padding:5px 0;border:1px solid var(--line);border-radius:7px;color:var(--ink);-webkit-appearance:none;-moz-appearance:textfield;appearance:none;}
+  .coin-step input:focus{outline:2px solid var(--red);outline-offset:1px;}
   .lore-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
   .l-half{grid-column:span 3;} .l-full{grid-column:span 6;} .l-third{grid-column:span 2;}
   @media(max-width:699px){ .l-half,.l-full,.l-third{grid-column:span 6;} }
@@ -242,6 +245,14 @@
     <div class="card lft"><h3>Misty Step <span class="tag t-bon">Bonus action</span> <span class="tag t-free">Free 1×</span></h3><div class="meta">Conjuration · from Fey Touched</div><p>Teleport 30 ft. Instant escape.</p></div>
     <div class="card lft"><h3>Hex <span class="tag t-bon">Bonus action</span> <span class="tag t-conc">Conc.</span> <span class="tag t-free">Free 1×</span></h3><div class="meta">Enchantment · from Fey Touched</div><p>+1d6 necrotic per hit on a marked target (1 h).</p></div>
   </div>
+
+  <h2><svg class="ic"><use href="#ic-spark"/></svg> Familiar — Find Familiar</h2>
+  <div class="card lft"><h3>Cuervo (Raven) <span class="meta">Bestia Diminuta · CR 0</span></h3>
+      <div class="meta">CA 12 · PV 2 · Velocidad 10 ft, vuelo 50 ft · Percepción pasiva 13</div>
+      <p><b>FUE</b> 2 (−4) · <b>DES</b> 14 (+2) · <b>CON</b> 8 (−1) · <b>INT</b> 2 (−4) · <b>SAB</b> 12 (+1) · <b>CAR</b> 6 (−2) · Perception +3</p>
+      <p><b>Mímica:</b> imita sonidos simples que escuchó (un susurro, un chillido). Detectarlo: salvación de Sabiduría (Insight) CD 10.</p>
+      <p><b>Pico:</b> +4 al ataque, alcance 5 ft — 1 de daño perforante.</p>
+      <p class="meta">Lo invocás con Find Familiar (ritual o gratis 1×/descanso). Te entrega tus conjuros de toque, explora, y podés ver por sus ojos como acción. Alternativa fuerte: el Búho (vuelo 60 ft, Vuelo Rasante, visión en la oscuridad 120 ft, Percepción +5) — el mejor para scoutear.</p></div>
 </section>
 <section id="details">
   <h2>Ability scores</h2>
@@ -312,9 +323,9 @@
   <h2><svg class="ic"><use href="#ic-coin"/></svg> Money</h2>
   <div class="card">
     <div class="coins3">
-      <div class="coin"><span class="coin-lbl">Copper (cp)</span><input type="number" id="copper" value="0" min="0"></div>
-      <div class="coin"><span class="coin-lbl">Silver (sp)</span><input type="number" id="silver" value="0" min="0"></div>
-      <div class="coin"><span class="coin-lbl">Gold (gp)</span><input type="number" id="gold" value="13" min="0"></div>
+      <div class="coin"><span class="coin-lbl">Copper (cp)</span><div class="coin-step"><button class="cbtn" id="copperMinus">−</button><input type="number" id="copper" value="0" min="0"><button class="cbtn" id="copperPlus">+</button></div></div>
+      <div class="coin"><span class="coin-lbl">Silver (sp)</span><div class="coin-step"><button class="cbtn" id="silverMinus">−</button><input type="number" id="silver" value="0" min="0"><button class="cbtn" id="silverPlus">+</button></div></div>
+      <div class="coin"><span class="coin-lbl">Gold (gp)</span><div class="coin-step"><button class="cbtn" id="goldMinus">−</button><input type="number" id="gold" value="13" min="0"><button class="cbtn" id="goldPlus">+</button></div></div>
     </div>
   </div>
   <h2>Starting equipment <span style="font-weight:400;text-transform:none;font-size:.8rem">· reference, where it came from</span></h2>
@@ -383,9 +394,9 @@
     });
     document.getElementById('prepCount').textContent=prepCount()+' / 4';
   }
-  document.querySelectorAll('.spell .sp-head').forEach(function(hd){
-    hd.addEventListener('click',function(){
-      var name=hd.closest('.spell').dataset.spell;
+  document.querySelectorAll('.spell').forEach(function(card){
+    card.addEventListener('click',function(){
+      var name=card.dataset.spell;
       if(state.prepared[name]){ state.prepared[name]=0; }
       else{ if(prepCount()>=4){ toast('Max 4 level-1 spells prepared — unprepare one first'); return; } state.prepared[name]=1; }
       save(); renderPrepared();
@@ -407,15 +418,21 @@
   var invEl=document.getElementById('inv');
   invEl.addEventListener('input',function(){ state.inv=invEl.value; save(); });
   var coins=['copper','silver','gold'], coinEls={};
-  coins.forEach(function(k){ var el=document.getElementById(k); coinEls[k]=el; el.addEventListener('input',function(){ state[k]=parseInt(el.value,10)||0; save(); }); });
+  coins.forEach(function(k){
+    var el=document.getElementById(k); coinEls[k]=el;
+    el.addEventListener('input',function(){ state[k]=parseInt(el.value,10)||0; save(); });
+    document.getElementById(k+'Minus').addEventListener('click',function(){ state[k]=Math.max(0,(state[k]||0)-1); save(); renderCoins(); });
+    document.getElementById(k+'Plus').addEventListener('click',function(){ state[k]=(state[k]||0)+1; save(); renderCoins(); });
+  });
   function renderCoins(){ coins.forEach(function(k){ var el=coinEls[k]; if(document.activeElement!==el) el.value=state[k]; }); }
   function renderAll(){ renderPrepared(); renderPips(); renderHP(); renderCoins(); }
   document.querySelectorAll('.js-short').forEach(function(b){
     b.addEventListener('click',function(){
+      state.used.hd=1;
       var msg;
-      if(state.used.recovery===0 && state.used.slots>0){ state.used.slots--; state.used.recovery=1; msg='Short rest — Arcane Recovery: 1 level-1 slot back'; }
-      else if(state.used.recovery>0){ msg='Short rest — Arcane Recovery already used (resets on a long rest)'; }
-      else { msg='Short rest — no spent slot to recover. Spend a Hit Die to heal (tap it, then add HP)'; }
+      if(state.used.recovery===0 && state.used.slots>0){ state.used.slots--; state.used.recovery=1; msg='Short rest — Hit Die spent · Arcane Recovery: +1 level-1 slot'; }
+      else if(state.used.recovery>0){ msg='Short rest — Hit Die spent · Arcane Recovery already used'; }
+      else { msg='Short rest — Hit Die spent (add the rolled HP)'; }
       save(); renderAll(); toast(msg);
     });
   });
